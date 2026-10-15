@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Importu Audi</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 40px auto; padding: 0 20px; background: #f4f4f9; color: #333; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        input, button { padding: 10px; font-size: 16px; margin-right: 10px; margin-bottom: 10px; }
+        input { width: 50%; }
+        button { background: #0056b3; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #004494; }
+        .result-box { background: #eef2f7; padding: 15px; border-radius: 6px; margin-top: 15px; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>Kalkulator Importu Audi</h1>
+        <p>Wyszukaj podobne oferty na portalach ogłoszeniowych w Polsce za pomocą DuckDuckGo:</p>
+        <div style="display: flex; flex-wrap: wrap;">
+            <input type="text" id="query" value="Audi A3 8P site:otomoto.pl" placeholder="np. Audi A3 8P otomoto">
+            <button onclick="searchDuckDuckGo()">Szukaj w DuckDuckGo</button>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Ręczna analiza cen znalezionych ofert (PLN)</h2>
+        <p>Wpisz ceny znalezionych ogłoszeń (oddzielone przecinkami):</p>
+        <input type="text" id="prices" value="25000, 27500, 30000, 26000" style="width: 100%;">
+        <br>
+        <button onclick="calculateStats()">Oblicz statystyki cenowe</button>
+        
+        <div id="stats-results" class="result-box" style="display:none;">
+            <h3>Wyniki analizy rynkowej:</h3>
+            <p id="stat-avg"></p>
+            <p id="stat-median"></p>
+            <p id="stat-min-max"></p>
+        </div>
+    </div>
+
+    <script>
+        function searchDuckDuckGo() {
+            const query = document.getElementById('query').value;
+            const url = `https://duckduckgo.com/?q=${encodeURIComponent(query)}`;
+            window.open(url, '_blank');
+        }
+
+        function calculateStats() {
+            const input = document.getElementById('prices').value;
+            const prices = input.split(',').map(p => parseFloat(p.trim())).filter(p => !isNaN(p));
+            
+            if (prices.length === 0) {
+                alert('Wpisz poprawne ceny oddzielone przecinkami.');
+                return;
+            }
+
+            prices.sort((a, b) => a - b);
+            const sum = prices.reduce((a, b) => a + b, 0);
+            const avg = sum / prices.length;
+            
+            let median;
+            const mid = Math.floor(prices.length / 2);
+            if (prices.length % 2 === 0) {
+                median = (prices[mid - 1] + prices[mid]) / 2;
+            } else {
+                median = prices[mid];
+            }
+
+            const min = prices[0];
+            const max = prices[prices.length - 1];
+
+            document.getElementById('stat-avg').innerHTML = `<strong>Średnia cena:</strong> ${avg.toFixed(2)} PLN`;
+            document.getElementById('stat-median').innerHTML = `<strong>Mediana cen:</strong> ${median.toFixed(2)} PLN`;
+            document.getElementById('stat-min-max').innerHTML = `<strong>Zakres cen:</strong> min. ${min} PLN — max. ${max} PLN`;
+            document.getElementById('stats-results').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
