@@ -1,37 +1,40 @@
-# Audi Import — kalkulator importu z Niemiec
+# Audi Import — kalkulator importu samochodu
 
-Aplikacja webowa z formularzem kosztów importu, wyszukiwaniem podobnych ofert w Polsce, medianą i średnią ceną ofertową oraz linkami do ogłoszeń.
+Responsywna aplikacja po polsku do szacowania kosztu sprowadzenia samochodu z Niemiec i porównywania go z podobnymi ofertami w Polsce.
 
-## Źródło danych rynkowych
-Backend używa **Brave Search API** do wyszukiwania publicznie indeksowanych stron z ofertami (m.in. OTOMOTO, OLX, Autoplac). Wyniki zależą od indeksu wyszukiwarki i fragmentów stron; nie jest to pełny feed ogłoszeń ani oficjalna baza wszystkich transakcji.
+## Wersja bez płatnego API
 
-OTOMOTO informuje, że ich API jest dostępne dla klientów biznesowych i wymaga uzyskania dostępu. Jeśli otrzymasz uprawnienia do oficjalnego API, można dodać dedykowany konektor. Zobacz: https://www.otomoto.pl/news/jak-uzyskac-dostep-do-api
+Ta wersja **nie wymaga klucza Brave ani innego płatnego API**. Po kliknięciu „Szukaj podobnych ofert w DuckDuckGo” aplikacja przygotowuje linki do wyszukiwania w DuckDuckGo (OTOMOTO, OLX i pozostałe wyniki). Wybierz porównywalne ogłoszenia i wpisz ich ceny do pola w aplikacji. Kalkulator obliczy średnią, medianę, minimum, maksimum oraz różnicę między medianą ofert a szacowanym kosztem importu.
+
+DuckDuckGo nie udostępnia oficjalnego, bezpłatnego API do pełnych wyników wyszukiwania, więc ta wersja nie udaje, że automatycznie pobiera ceny. Sprawdź w samych ogłoszeniach rocznik, silnik, nadwozie i przebieg.
+
+## Wdrożenie na Render
+
+1. Rozpakuj ZIP.
+2. Wgraj pliki i folder `public` do swojego repozytorium GitHub (zastąp stare pliki).
+3. Zatwierdź zmiany (commit) i wypchnij je do GitHub.
+4. Render powinien wykryć commit i wdrożyć aplikację automatycznie. Jeśli nie, wybierz **Manual Deploy → Deploy latest commit**.
+5. Nie musisz dodawać `BRAVE_SEARCH_API_KEY` ani tworzyć pliku `.env`.
+
+Ustawienia usługi Render: Build Command `npm install`, Start Command `npm start`.
 
 ## Uruchomienie lokalne
-1. Zainstaluj Node.js 18 lub nowszy.
-2. Rozpakuj projekt i otwórz katalog w terminalu.
-3. Skopiuj `.env.example` do `.env`.
-4. Dodaj własny `BRAVE_SEARCH_API_KEY` z https://brave.com/search/api/
-5. Uruchom:
-   ```bash
-   npm install
-   npm start
-   ```
-6. Otwórz http://localhost:3000
 
-Klucz API pozostaje na serwerze i nie jest wysyłany do przeglądarki.
+Wymagany Node.js 18 lub nowszy:
 
-## Co robi kalkulator
-- Koszt zakupu w EUR przeliczony na PLN.
-- Akcyza (3,1% do 2000 cm³ lub 18,6% powyżej 2000 cm³; można zmienić stawkę).
-- Transport, badanie, rejestracja, dokumenty, inspekcja, serwis, OC i dodatkowa rezerwa.
-- Wyszukiwanie podobnych ofert w Polsce według modelu, rocznika, paliwa, silnika i zakresu przebiegu.
-- Mediana i średnia arytmetyczna cen znalezionych ofert, zakres cen i linki źródłowe.
-- Porównanie całkowitego kosztu importu z medianą rynku polskiego.
+```bash
+npm install
+npm start
+```
 
-## Ważne ograniczenia
-- Przed pierwszym użyciem wymagany jest klucz Brave Search API. Bez niego aplikacja nie udaje, że pobrała aktualne ogłoszenia.
-- Wyniki wyszukiwania mogą zawierać duplikaty, brakujące parametry lub ceny w niejednolitym formacie. Aplikacja deduplikuje URL-e i próbuje wyciągnąć cenę z tytułu/fragmentu, ale zalecana jest weryfikacja ogłoszeń.
-- Średnia i mediana dotyczą znalezionych ofert, nie wszystkich transakcji na rynku.
-- Kalkulacja akcyzy jest orientacyjna. Podstawa podatkowa może wymagać korekty; sprawdź aktualne zasady na podatki.gov.pl. Nie jest to porada podatkowa.
-- Aplikacja nie scrapuje bezpośrednio stron portali i nie omija zabezpieczeń. Korzysta z wyników wyszukiwarki.
+Otwórz `http://localhost:3000`.
+
+## Co wylicza kalkulator
+
+- cenę zakupu w EUR przeliczoną na PLN;
+- szacunkową akcyzę (stawka edytowalna; wynik nie jest poradą podatkową);
+- transport, badanie, rejestrację, dokumenty, inspekcję, serwis, OC i inne koszty;
+- średnią, medianę, minimum i maksimum z ręcznie wpisanych cen ofert;
+- różnicę między całkowitym kosztem importu a medianą wpisanych cen.
+
+Statystyki rynku zależą od cen ręcznie wybranych przez użytkownika. To ceny ofertowe, a nie potwierdzone ceny transakcyjne.
